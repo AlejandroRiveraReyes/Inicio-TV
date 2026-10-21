@@ -35,8 +35,11 @@ object TvInputs {
     }
 
     fun open(ctx: Context, input: InputEntry): Boolean {
+        // Para el sintonizador, primero la dirección genérica de «TV en vivo» (la estándar de Android TV).
+        // La específica de la entrada la acepta el sistema en algunas TV, pero no llega a abrir nada
+        // y rebota a Inicio, así que solo se usa como alternativa.
         val uris = if (input.isTuner) {
-            listOf(TvContract.buildChannelsUriForInput(input.id), TvContract.Channels.CONTENT_URI)
+            listOf(TvContract.Channels.CONTENT_URI, TvContract.buildChannelsUriForInput(input.id))
         } else {
             listOf(TvContract.buildChannelUriForPassthroughInput(input.id))
         }

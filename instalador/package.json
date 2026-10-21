@@ -1,6 +1,6 @@
 {
   "name": "instalador-inicio-tv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Instala el launcher Inicio TV en una Android TV desde el ordenador",
   "main": "src/main.js",
   "private": true,
