@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; font-src 'self'">
+<title>Inicio TV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Marco de televisor compartido por varias pantallas -->
+<svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
+  <symbol id="tvFrame" viewBox="0 0 260 184">
+    <rect class="stroke" x="8" y="8" width="244" height="148" rx="12"/>
+    <path class="stroke" d="M96 172h68M130 156v16"/>
+  </symbol>
+</svg>
+
+<div class="app" id="app">
+  <header class="bar">
+    <div class="brand"><i class="led" id="led"></i><span>Inicio TV</span></div>
+    <button class="link" type="button" data-act="help">Preparar la TV</button>
+  </header>
+
+  <main class="stage" id="stage">
+
+    <!-- Buscando / conectando -->
+    <section class="view" data-view="scan" hidden>
+      <div class="copy">
+        <h1 class="s" id="scanTitle">Buscando<br><em>tu TV</em></h1>
+        <p class="sub s" id="scanSub">Debe estar encendida y en este mismo wifi.</p>
+        <div class="actions s"><button class="link" type="button" data-act="help">¿La TV está preparada?</button></div>
+      </div>
+      <div class="visual s">
+        <div class="radar" aria-hidden="true">
+          <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+          <span class="core"></span>
+          <div class="blips" id="blips"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Varias TV -->
+    <section class="view" data-view="pick" hidden>
+      <div class="copy">
+        <h1 class="s">Elige<br><em>tu TV</em></h1>
+        <p class="sub s">Hay varios dispositivos con la depuración por red activa.</p>
+        <ul class="list s" id="pickList"></ul>
+        <div class="actions s">
+          <button class="link" type="button" data-act="rescan">Buscar de nuevo</button>
+          <form class="ipform" novalidate><input type="text" inputmode="decimal" placeholder="O escribe la IP" aria-label="Dirección IP de la TV" autocomplete="off" spellcheck="false"></form>
+        </div>
+      </div>
+      <div class="visual s">
+        <svg class="tv" viewBox="0 0 260 184" aria-hidden="true"><use href="#tvFrame"/><rect class="cursor" x="40" y="40" width="3" height="14"/></svg>
+      </div>
+    </section>
+
+    <!-- Ninguna TV -->
+    <section class="view" data-view="none" hidden>
+      <div class="copy">
+        <h1 class="s">No veo<br><em>ninguna TV</em></h1>
+        <p class="sub s" id="noneSub">Lo más probable: falta activar la depuración por red en la TV. Son un par de minutos, una sola vez.</p>
+        <div class="actions s">
+          <button class="btn" type="button" data-act="help" data-autofocus>Ver cómo</button>
+          <button class="link" type="button" data-act="rescan">Buscar de nuevo</button>
+        </div>
+        <form class="ipform s" novalidate><input type="text" inputmode="decimal" placeholder="¿Sabes su IP? Escríbela" aria-label="Dirección IP de la TV" autocomplete="off" spellcheck="false"></form>
+      </div>
+      <div class="visual s">
+        <svg class="tv" viewBox="0 0 260 184" aria-hidden="true"><use href="#tvFrame"/><path class="stroke slash" d="M104 58l52 52M156 58l-52 52"/></svg>
+      </div>
+    </section>
+
+    <!-- Esperando que la TV autorice -->
+    <section class="view" data-view="auth" hidden>
+      <div class="copy">
+        <h1 class="s">Mira<br><em>la TV</em></h1>
+        <p class="sub s">Marca <strong>«Permitir siempre»</strong> y pulsa <strong>Permitir</strong>. Solo te lo pedirá esta vez.</p>
+        <div class="actions s"><button class="link" type="button" data-act="rescan">Cancelar</button></div>
+      </div>
+      <div class="visual s">
+        <svg class="tv" viewBox="0 0 260 184" aria-hidden="true">
+          <use href="#tvFrame"/>
+          <g class="dialog">
+            <rect class="stroke thin" x="62" y="38" width="136" height="88" rx="7"/>
+            <rect class="ink" x="76" y="52" width="58" height="5" rx="2.5"/>
+            <rect class="stroke thin" x="76" y="72" width="11" height="11" rx="2.5"/>
+            <path class="chk" d="M79 77.5l2.6 2.8 4.4-5.6"/>
+            <rect class="soft" x="94" y="75" width="64" height="5" rx="2.5"/>
+            <rect class="stroke thin" x="82" y="100" width="46" height="16" rx="4"/>
+            <rect class="stroke thin allow" x="136" y="100" width="48" height="16" rx="4"/>
+            <rect class="allow-fill" x="136" y="100" width="48" height="16" rx="4"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Conectada: instalar o gestionar -->
+    <section class="view" data-view="ready" hidden>
+      <div class="copy">
+        <p class="eyebrow s"><i class="dot" id="readyDot"></i><span id="readyState"></span></p>
+        <h1 class="s" id="readyName"></h1>
+        <p class="sub s mono" id="readyMeta"></p>
+
+        <div class="seg s" id="mode" role="radiogroup" aria-label="Tipo de instalación">
+          <i class="thumb" aria-hidden="true"></i>
+          <button type="button" role="radio" aria-checked="true" data-mode="strong">Completa</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="normal">Solo instalar</button>
+        </div>
+        <p class="hint s" id="modeHint"></p>
+
+        <div class="actions s">
+          <button class="btn" type="button" data-act="install" id="installBtn" data-autofocus><span class="label" id="installLabel">Instalar en la TV</span></button>
+          <button class="link" type="button" data-act="revert" id="revertBtn">Volver al original</button>
+          <button class="link danger" type="button" data-act="uninstall" id="uninstallBtn"><span class="label">Desinstalar</span></button>
+        </div>
+      </div>
+      <div class="visual s">
+        <svg class="tv" viewBox="0 0 260 184" aria-hidden="true">
+          <use href="#tvFrame"/>
+          <g class="pills"><rect class="ink-soft" x="24" y="26" width="26" height="6" rx="3"/><rect class="ink-soft" x="56" y="26" width="26" height="6" rx="3"/><rect class="ink-soft" x="88" y="26" width="26" height="6" rx="3"/></g>
+          <g class="tiles">
+            <rect class="tile on" x="24" y="50" width="62" height="35" rx="4"/>
+            <rect class="tile" x="94" y="50" width="62" height="35" rx="4"/>
+            <rect class="tile" x="164" y="50" width="62" height="35" rx="4"/>
+            <rect class="tile" x="24" y="94" width="62" height="35" rx="4"/>
+            <rect class="tile" x="94" y="94" width="62" height="35" rx="4"/>
+            <rect class="tile" x="164" y="94" width="62" height="35" rx="4"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Trabajando -->
+    <section class="view" data-view="working" hidden>
+      <div class="copy">
+        <h1 class="s" id="workTitle">Instalando</h1>
+        <p class="sub s" id="workPhase" aria-live="polite">Preparando</p>
+      </div>
+      <div class="visual s">
+        <div class="odometer" role="img" aria-label="Progreso" id="odo">
+          <span class="digit"><span class="reel" id="reelTens"></span></span>
+          <span class="digit"><span class="reel" id="reelOnes"></span></span>
+          <span class="pct">%</span>
+        </div>
+        <div class="track" aria-hidden="true"><i id="track"></i></div>
+      </div>
+    </section>
+
+    <!-- Hecho -->
+    <section class="view" data-view="done" hidden>
+      <div class="copy">
+        <h1 class="s" id="doneTitle">Listo</h1>
+        <p class="sub s" id="doneSub"></p>
+        <div class="actions s"><button class="btn" type="button" data-act="back" data-autofocus>Entendido</button></div>
+      </div>
+      <div class="visual s">
+        <svg class="seal" viewBox="0 0 180 180" aria-hidden="true">
+          <g class="ticks"></g>
+          <circle class="ring-draw" cx="90" cy="90" r="64"/>
+          <path class="tick-draw" d="M62 92l20 21 38-44"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Error -->
+    <section class="view" data-view="error" hidden>
+      <div class="copy">
+        <h1 class="s">Algo<br><em>ha fallado</em></h1>
+        <p class="sub s" id="errorMsg"></p>
+        <div class="actions s">
+          <button class="btn" type="button" data-act="retry" data-autofocus>Reintentar</button>
+          <button class="link" type="button" data-act="help">Preparar la TV</button>
+        </div>
+      </div>
+      <div class="visual s">
+        <svg class="tv" viewBox="0 0 260 184" aria-hidden="true"><use href="#tvFrame"/><path class="stroke slash" d="M104 58l52 52M156 58l-52 52"/></svg>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="steps" id="steps" aria-hidden="true"><i></i><i></i><i></i></div>
+    <span class="mono" id="stepLabel">Buscar</span>
+    <span class="mono ip" id="ipLabel"></span>
+  </footer>
+</div>
+
+<!-- Guía para preparar la TV -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" inert>
+  <div class="drawer-head">
+    <div>
+      <h2 id="drawerTitle">Preparar la TV</h2>
+      <p class="muted">Se hace una vez, con el mando. Unos 2 minutos.</p>
+    </div>
+    <button class="link" type="button" data-act="close" id="drawerClose">Cerrar</button>
+  </div>
+  <ol class="guide" id="guide"></ol>
+  <div class="tips">
+    <h3>Si algo no cuadra</h3>
+    <ul>
+      <li>La TV y este ordenador deben estar en la <strong>misma red</strong>. El wifi de invitados no sirve.</li>
+      <li>Si no aparece «Depuración por red», activa antes la <strong>Depuración USB</strong>, sal y vuelve a entrar.</li>
+      <li>Algunas TV la desactivan al reiniciarse. Si deja de encontrarla, vuelve a activarla.</li>
+      <li>La IP de la TV está en Ajustes → Red e Internet. Puedes escribirla a mano.</li>
+    </ul>
+  </div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Inicio TV</string>
+    <string name="hero_hint">OK para abrir · Mantén OK o pulsa Menú para mover o quitar</string>
+    <string name="add_apps">Añadir apps</string>
+    <string name="add">Añadir</string>
+    <string name="all_apps">Aplicaciones</string>
+    <string name="pick_title">Apps de Inicio</string>
+    <string name="pick_hint">OK añade o quita · Atrás para terminar</string>
+    <string name="apps_hint">OK abre · Mantén OK para añadir o quitar de Inicio</string>
+    <string name="settings_title">Personalizar</string>
+    <string name="settings_desc">Ajusta tu pantalla de inicio y elige qué launcher usa la TV. Siempre puedes volver al original.</string>
+    <string name="wallpaper_title">Fondo de pantalla</string>
+    <string name="wallpaper_hint">OK para elegir · Atrás para volver</string>
+</resources>

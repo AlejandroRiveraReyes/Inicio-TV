@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:width="48dp" android:height="48dp" />
+            <gradient android:angle="315" android:startColor="#FF1C1C24" android:endColor="#FF3A3A48" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_home" android:gravity="center"
+        android:width="28dp" android:height="28dp" />
+</layer-list>
